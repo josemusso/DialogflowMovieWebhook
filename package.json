@@ -1,10 +1,13 @@
 {
-  "name": "untitled1",
-  "version": "0.0.0",
-  "private": true,
+  "name": "movie-webhook",
+  "version": "1.0.0",
+  "description": "diaglogflow test",
+  "main": "index.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node index.js"
   },
+  "author": "jose musso",
+  "license": "ISC",
   "dependencies": {
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
@@ -13,5 +16,8 @@
     "morgan": "~1.9.0",
     "pug": "2.0.0-beta11",
     "unirest": "^0.5.1"
+  },
+  "engines": {
+    "node": "10.14.2"
   }
 }
