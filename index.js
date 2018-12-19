@@ -40,7 +40,7 @@ server.post('/getMovies',function (request,response)  {
                 }
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
-                    "speech" : output,
+                    "speech" : "Top Rated Movies:\n" + output,
                     "displayText" : output
                 }));
             }
@@ -85,7 +85,8 @@ server.post('/getMovies',function (request,response)  {
             }
         });
 
-    } else if(request.body.result.parameters['popular-movies']) {
+    }
+    else if(request.body.result.parameters['popular-movies']) {
         var req = unirest("GET", "https://api.themoviedb.org/3/movie/popular");
         req.query({
             "page": "1",
@@ -109,7 +110,37 @@ server.post('/getMovies',function (request,response)  {
                 }
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
-                    "speech" : output,
+                    "speech" : "Most Popular Movies:\n" + output,
+                    "displayText" : output
+                }));
+            }
+        });
+    }
+    else if(request.body.result.parameters['now-playing']) {
+        var req = unirest("GET", "https://api.themoviedb.org/3/movie/now_playing");
+        req.query({
+            "page": "1",
+            "language": "en-US",
+            "api_key": "6f85f3f3f9be7e521911dab7a7bc6e9c"
+        });
+        req.send("{}");
+        req.end(function(res){
+            if(res.error) {
+                response.setHeader('Content-Type', 'application/json');
+                response.send(JSON.stringify({
+                    "speech" : "Error. Can you try it again ? ",
+                    "displayText" : "Error. Can you try it again ? "
+                }));
+            } else {
+                let result = res.body.results;
+                let output = '';
+                for(let i = 0; i < result.length;i++) {
+                    output += result[i].title;
+                    output+="\n"
+                }
+                response.setHeader('Content-Type', 'application/json');
+                response.send(JSON.stringify({
+                    "speech" : "Movies On Theaters:\n" + output,
                     "displayText" : output
                 }));
             }
