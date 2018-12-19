@@ -30,7 +30,8 @@ server.post('/getMovies',function (request,response)  {
                     "speech" : "Error. Can you try it again ? ",
                     "displayText" : "Error. Can you try it again ? "
                 }));
-            } else if(res.body.results.length > 0) {
+            }
+            else if(res.body.results.length > 0) {
                 let result = res.body.results;
                 let output = '';
                 for(let i = 0; i<result.length;i++) {
@@ -44,7 +45,8 @@ server.post('/getMovies',function (request,response)  {
                 }));
             }
         });
-    } else if(request.body.result.parameters['movie-name']) {
+    }
+    else if(request.body.result.parameters['movie-name']) {
         //   console.log('popular-movies param found');
         let movie = request.body.result.parameters['movie-name'];
         var req = unirest("GET", "https://api.themoviedb.org/3/search/movie");
@@ -63,16 +65,18 @@ server.post('/getMovies',function (request,response)  {
                     "speech" : "Error. Can you try it again ? ",
                     "displayText" : "Error. Can you try it again ? "
                 }));
-            } else if(res.body.results.length > 0) {
+            }
+            else if(res.body.results.length > 0) {
                 let result = res.body.results[0];
                 let output = "Average Rating : " + result.vote_average +
-                    "\n Plot : " + result.overview + "url" + result.poster_path
+                    "\nPlot : " + result.overview + "\nhttp://image.tmdb.org/t/p/w185/" + result.poster_path
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
                     "speech" : output,
                     "displayText" : output
                 }));
-            } else {
+            }
+            else {
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
                     "speech" : "Couldn't find any details. :(  ",
