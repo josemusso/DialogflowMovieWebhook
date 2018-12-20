@@ -1,4 +1,4 @@
-// dependencies
+// definir constantes a usar
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -7,14 +7,17 @@ var unirest = require("unirest");
 let errorResponse = {
     results: []
 };
+
+// definir puerto
 var port = process.env.PORT || 8080;
-// create serve and configure it.
+
+// server
 const server = express();
 
 server.use(bodyParser.json());
 
 server.post('/getMovies',function (request,response)  {
-
+//  caso parametro top-rated esta en la frase de input
     if(request.body.result.parameters['top-rated']) {
         var req = unirest("GET", "https://api.themoviedb.org/3/movie/top_rated");
         req.query({
@@ -25,13 +28,16 @@ server.post('/getMovies',function (request,response)  {
         req.send("{}");
         req.end(function(res) {
             if(res.error) {
+//              manejo de error
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
+//                  enviar respuesta
                     "speech" : "Error. Can you try it again ? ",
                     "displayText" : "Error. Can you try it again ? "
                 }));
             }
             else if(res.body.results.length > 0) {
+//              caso exitoso
                 let result = res.body.results;
                 let output = '';
                 for(let i = 0; i<result.length;i++) {
@@ -47,7 +53,7 @@ server.post('/getMovies',function (request,response)  {
         });
     }
     else if(request.body.result.parameters['movie-name']) {
-        //   console.log('popular-movies param found');
+//  caso parametro movie-name esta en la frase de input
         let movie = request.body.result.parameters['movie-name'];
         var req = unirest("GET", "https://api.themoviedb.org/3/search/movie");
         req.query({
@@ -60,8 +66,10 @@ server.post('/getMovies',function (request,response)  {
         req.send("{}");
         req.end(function(res) {
             if(res.error) {
+//              manejo de error
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
+//                  enviar respuesta
                     "speech" : "Error. Can you try it again ? ",
                     "displayText" : "Error. Can you try it again ? "
                 }));
@@ -72,6 +80,7 @@ server.post('/getMovies',function (request,response)  {
                     "\nPlot : " + result.overview + "\nhttp://image.tmdb.org/t/p/w185/" + result.poster_path
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
+//                  enviar respuesta con detalles de overview, rating y foto
                     "speech" : output,
                     "displayText" : output
                 }));
@@ -79,6 +88,7 @@ server.post('/getMovies',function (request,response)  {
             else {
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
+//                  enviar respuesta si no se encuentra la pelicula
                     "speech" : "Couldn't find any details. :(  ",
                     "displayText" : "Couldn't find any details. :(  "
                 }));
@@ -87,6 +97,7 @@ server.post('/getMovies',function (request,response)  {
 
     }
     else if(request.body.result.parameters['popular-movies']) {
+//  caso parametro popular-movies esta en la frase de input
         var req = unirest("GET", "https://api.themoviedb.org/3/movie/popular");
         req.query({
             "page": "1",
@@ -110,6 +121,7 @@ server.post('/getMovies',function (request,response)  {
                 }
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
+//                  enviar respuesta
                     "speech" : "Most Popular Movies:\n" + output,
                     "displayText" : output
                 }));
@@ -117,6 +129,7 @@ server.post('/getMovies',function (request,response)  {
         });
     }
     else if(request.body.result.parameters['now-playing']) {
+//  caso parametro now-playing esta en la frase de input
         var req = unirest("GET", "https://api.themoviedb.org/3/movie/now_playing");
         req.query({
             "page": "1",
@@ -140,6 +153,7 @@ server.post('/getMovies',function (request,response)  {
                 }
                 response.setHeader('Content-Type', 'application/json');
                 response.send(JSON.stringify({
+//                  enviar respuesta
                     "speech" : "Movies On Theaters:\n" + output,
                     "displayText" : output
                 }));
@@ -148,10 +162,12 @@ server.post('/getMovies',function (request,response)  {
     }
 });
 
+// funcion de prueba para ver si el webook esta online
 server.get('/getName',function (req,res){
     res.send('Jose Musso prueba Webhook');
 });
 
+// dejar webhook activo para escuchar solicitud
 server.listen(port, function () {
     console.log("Server is up and running...");
 });
